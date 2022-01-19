@@ -15,9 +15,10 @@
         <input id="pokeNameInput" type="text">
         <button id="searchPokeButton" type="submit">Search</button>
     </form>
-    <div class="grid"></div>
+    <div class="grid" id="savedPoke"></div>
 
     <script>
+        let pokeDB = JSON.parse(localStorage.getItem("pokemonList")) || []; 
         function onbodyload() {
             document.getElementById("searchPokeButton").addEventListener("click", callAPI)
             const allPokemon = []
@@ -55,6 +56,32 @@
                 Promise.all(allPokemon)
                 .then((allPokemonData) => {console.log(allPokemonData)})
             })
+            const savedPokeGrid = document.getElementById("savedPoke");
+            pokeDB.forEach( (pokemon) => { 
+                const singlePoke = document.createElement("div");
+                const savedPokeImage = document.createElement("img");
+                savedPokeImage.setAttribute("src", pokemon.pictureURL);
+                singlePoke.appendChild(savedPokeImage);
+                Object.keys(pokemon).forEach( (pokeAttribute) => {
+                    const newPTag = document.createElement("p");
+                    if (pokeAttribute === "height") {
+                        newPTag.innerText = "Height: " + pokemon.height;
+                    } else if (pokeAttribute === "weight") {
+                        newPTag.innerText = "Weight: " + pokemon.weight;
+                    } else if (pokeAttribute === "species") {
+                        newPTag.innerText = "Species: " + pokemon.species.name;
+                    } else if (pokeAttribute === "abilities") {
+                        const ability = pokemon.abilities.reduce( (acc, currValue) => {
+                            return acc.concat(currValue.ability.name + ", ")
+                        }, "")
+                        .trim();
+                        newPTag.innerText = "Abilities: " + ability.substring(0, ability.length - 1);
+                    } 
+                    singlePoke.appendChild(newPTag);
+                });
+                savedPokeGrid.appendChild(singlePoke)
+        
+            })
         }
         function getRandomInt(max) {
             return Math.floor(Math.random() * max);
@@ -62,7 +89,6 @@
 
         function callAPI(event) {
             event.preventDefault();
-            console.log("hello")
             const pokeName = document.getElementById("pokeNameInput").value;
             console.log(document.getElementById("pokeName"))
             const url = `https://pokeapi.co/api/v2/pokemon/${pokeName}`
@@ -101,9 +127,25 @@
                     } 
                     pokeAttributes.appendChild(newPTag);
                 })
-                pokeImage.setAttribute("src", json.sprites.front_default)
+                pokeImage.setAttribute("src", json.sprites.front_default);
+                const saveButton = document.createElement("button");
+                saveButton.innerText = "Save Pokémon";
+
+                saveButton.addEventListener("click",  () => {
+                    const pokeToSave = { 
+                       name: json.name,
+                       height: json.height,
+                       weight: json.weight,
+                       species: json.species,
+                       abilities: json.abilities,
+                       pictureURL: json.sprites.front_default,
+                    };
+                    pokeDB.push(pokeToSave);
+                    localStorage.setItem("pokemonList", JSON.stringify(pokeDB));
+                })
+
+                pokeAttributes.appendChild(saveButton);
                 pokeName.innerText = json.name;
-                console.log(json);
                 }
             )
             return false;

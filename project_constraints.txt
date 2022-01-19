@@ -9,3 +9,4 @@ to set up a json database
 json-server --watch db.json
 (instructs json-server to set up a db.json in current directory)
 
+click, change, submit, DOMContentLoaded
