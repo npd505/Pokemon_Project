@@ -1,8 +1,9 @@
-console.log("hello")
-// document.addEventListener("") add dom listener
+document.addEventListener("DOMContentLoaded", onbodyload)
+
+let allPokeIDs = new Set();
 let pokeDB = JSON.parse(localStorage.getItem("pokemonList")) || []; 
 function onbodyload() {
-    document.getElementById("searchPokeButton").addEventListener("click", callAPI)
+    document.getElementById("searchInput").addEventListener("submit", callAPI)
     const allPokemon = []
     const url = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
     const res = fetch(url, {
@@ -41,6 +42,7 @@ function onbodyload() {
     })
     const savedPokeGrid = document.getElementById("savedPoke");
     pokeDB.forEach( (pokemon) => { 
+        allPokeIDs.add(pokemon.id);
         const singlePoke = document.createElement("div");
         const savedPokeImage = document.createElement("img");
         savedPokeImage.setAttribute("src", pokemon.pictureURL);
@@ -114,7 +116,13 @@ function callAPI(event) {
         const saveButton = document.createElement("button");
         saveButton.innerText = "Save Pokémon";
 
+
         saveButton.addEventListener("click",  () => {
+            if (allPokeIDs.has(json.id)) {
+                alert ("You already caught this Pokémon!");
+                resetSearch()
+                return ;
+            }
             const pokeToSave = { 
                name: json.name,
                height: json.height,
@@ -122,9 +130,36 @@ function callAPI(event) {
                species: json.species,
                abilities: json.abilities,
                pictureURL: json.sprites.front_default,
+               id: json.id,
             };
             pokeDB.push(pokeToSave);
+            allPokeIDs.add(json.id);
             localStorage.setItem("pokemonList", JSON.stringify(pokeDB));
+
+            const savedPokeGrid = document.getElementById("savedPoke");
+            const singlePoke = document.createElement("div");
+            const savedPokeImage = document.createElement("img");
+            savedPokeImage.setAttribute("src", json.sprites.front_default);
+            singlePoke.appendChild(savedPokeImage);
+           
+            const newPTag = document.createElement("p");
+            const newPTag2 = document.createElement("p");
+            const newPTag3 = document.createElement("p");
+            const newPTag4 = document.createElement("p");
+            newPTag.innerText = "Height: " + json.height;
+            newPTag2.innerText = "Weight: " + json.weight;
+            newPTag3.innerText = "Species: " + json.species.name;
+            const ability = json.abilities.reduce( (acc, currValue) => {
+                return acc.concat(currValue.ability.name + ", ")
+            }, "")
+            .trim();
+            newPTag4.innerText = "Abilities: " + ability.substring(0, ability.length - 1);
+            singlePoke.appendChild(newPTag);
+            singlePoke.appendChild(newPTag2);
+            singlePoke.appendChild(newPTag3);
+            singlePoke.appendChild(newPTag4);
+            savedPokeGrid.appendChild(singlePoke)
+            resetSearch()
         })
 
         pokeAttributes.appendChild(saveButton);
@@ -132,4 +167,15 @@ function callAPI(event) {
         }
     )
     return false;
+}
+
+function resetSearch() {
+    const getPokeName = document.getElementById("pokeName");
+    const getPokeAttributes = document.getElementById("pokeAttributes");
+    getPokeName.innerHTML = "";
+    getPokeAttributes.innerHTML = "";
+    const getPokeForm = document.getElementById("searchInput");
+    getPokeForm.reset();
+    const getPokeImage = document.getElementById("pokeImage");
+    getPokeImage.setAttribute("src", "");
 }
