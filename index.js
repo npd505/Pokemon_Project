@@ -37,8 +37,6 @@ function onbodyload() {
             .then(pokemon => console.log(pokemon))
             allPokemon.push(pokemonResponse)
         })
-        Promise.all(allPokemon)
-        .then((allPokemonData) => {console.log(allPokemonData)})
     })
     const savedPokeGrid = document.getElementById("savedPoke");
     pokeDB.forEach( (pokemon) => { 
@@ -49,12 +47,12 @@ function onbodyload() {
         singlePoke.appendChild(savedPokeImage);
         Object.keys(pokemon).forEach( (pokeAttribute) => {
             const newPTag = document.createElement("p");
-            if (pokeAttribute === "height") {
-                newPTag.innerText = "Height: " + pokemon.height;
+            if (pokeAttribute === "species") {
+                newPTag.innerText = "Species: " + pokemon.species.name;
             } else if (pokeAttribute === "weight") {
                 newPTag.innerText = "Weight: " + pokemon.weight;
-            } else if (pokeAttribute === "species") {
-                newPTag.innerText = "Species: " + pokemon.species.name;
+            } else if (pokeAttribute === "height") {
+                newPTag.innerText = "Height: " + pokemon.height;
             } else if (pokeAttribute === "abilities") {
                 const ability = pokemon.abilities.reduce( (acc, currValue) => {
                     return acc.concat(currValue.ability.name + ", ")
@@ -67,9 +65,6 @@ function onbodyload() {
         savedPokeGrid.appendChild(singlePoke)
 
     })
-}
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
 }
 
 function callAPI(event) {
@@ -113,9 +108,9 @@ function callAPI(event) {
             pokeAttributes.appendChild(newPTag);
         })
         pokeImage.setAttribute("src", json.sprites.front_default);
+        
         const saveButton = document.createElement("button");
         saveButton.innerText = "Save Pokémon";
-
 
         saveButton.addEventListener("click",  () => {
             if (allPokeIDs.has(json.id)) {
@@ -123,6 +118,7 @@ function callAPI(event) {
                 resetSearch()
                 return ;
             }
+
             const pokeToSave = { 
                name: json.name,
                height: json.height,
@@ -146,6 +142,7 @@ function callAPI(event) {
             const newPTag2 = document.createElement("p");
             const newPTag3 = document.createElement("p");
             const newPTag4 = document.createElement("p");
+            const deleteButtonElement = document.createElement("button");
             newPTag.innerText = "Height: " + json.height;
             newPTag2.innerText = "Weight: " + json.weight;
             newPTag3.innerText = "Species: " + json.species.name;
@@ -154,11 +151,15 @@ function callAPI(event) {
             }, "")
             .trim();
             newPTag4.innerText = "Abilities: " + ability.substring(0, ability.length - 1);
+            deleteButtonElement.innerText = "Remove Pokémon";
             singlePoke.appendChild(newPTag);
             singlePoke.appendChild(newPTag2);
             singlePoke.appendChild(newPTag3);
             singlePoke.appendChild(newPTag4);
-            savedPokeGrid.appendChild(singlePoke)
+            singlePoke.appendChild(deleteButtonElement);
+            savedPokeGrid.appendChild(singlePoke);
+        
+
             resetSearch()
         })
 
@@ -179,3 +180,22 @@ function resetSearch() {
     const getPokeImage = document.getElementById("pokeImage");
     getPokeImage.setAttribute("src", "");
 }
+
+function deleteThatPoke() {
+        deleteButton.addEventListener("click",  () => {
+
+        })
+
+            const pokeToDelete = { 
+               name: json.name,
+               height: json.height,
+               weight: json.weight,
+               species: json.species,
+               abilities: json.abilities,
+               pictureURL: json.sprites.front_default,
+               id: json.id,
+            };
+            pokeDB.pop(pokeToDelete);
+            allPokeIDs.remove(json.id);
+            // localStorage.setItem("pokemonList", JSON.stringify(pokeDB));
+        }
