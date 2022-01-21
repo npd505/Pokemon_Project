@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PokeAPI</title>
     <link rel="stylesheet" href="style.css">
+    <script src="index.js" charset="utf-8"> </script>
 </head>
-<body onload="onbodyload()">
+<body>
     <img src="" alt="" id="pokeImage">
     <h4 id="pokeName"></h4>
     <div id="pokeAttributes"></div>
@@ -15,100 +16,7 @@
         <input id="pokeNameInput" type="text">
         <button id="searchPokeButton" type="submit">Search</button>
     </form>
-    <div class="grid"></div>
-
-    <script>
-        function onbodyload() {
-            document.getElementById("searchPokeButton").addEventListener("click", callAPI)
-            const allPokemon = []
-            const url = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
-            const res = fetch(url, {
-                method: "GET",
-                mode: "cors",
-                cache: "no-cache",
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    'Access-Control-Allow-Origin': '*',
-                    'Accept': 'application/json',
-                },
-                redirect: "follow",
-                referrer: "no-referrer"
-            }) 
-            .then(response => response.json())
-            .then((data) => {
-                data.results.forEach((response) => {
-                    const pokemonResponse = fetch(response.url, {
-                        method: "GET",
-                        mode: "cors",
-                        cache: "no-cache",
-                        headers: {
-                            'Content-Type': 'application/json; charset=utf-8',
-                            'Access-Control-Allow-Origin': '*',
-                            'Accept': 'application/json',
-                        },
-                        redirect: "follow",
-                        referrer: "no-referrer"
-                    }) 
-                    .then(response => response.json())
-                    allPokemon.push(pokemonResponse)
-                })
-                Promise.all(allPokemon)
-                .then((allPokemonData) => {console.log(allPokemonData)})
-            })
-        }
-        function getRandomInt(max) {
-            return Math.floor(Math.random() * max);
-        }
-
-        function callAPI(event) {
-            event.preventDefault();
-            console.log("hello")
-            const pokeName = document.getElementById("pokeNameInput").value;
-            console.log(document.getElementById("pokeName"))
-            const url = `https://pokeapi.co/api/v2/pokemon/${pokeName}`
-            const res = fetch(url, {
-                method: "GET",
-                mode: "cors",
-                cache: "no-cache",
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    'Access-Control-Allow-Origin': '*',
-                    'Accept': 'application/json',
-                },
-                redirect: "follow",
-                referrer: "no-referrer"
-            }) 
-            .then(response => response.json())
-            .then(json => {
-                const pokeImage = document.getElementById("pokeImage");
-                const pokeName = document.getElementById("pokeName");
-                const pokeAttributes = document.getElementById("pokeAttributes");
-                pokeAttributes.innerHTML = "";
-                ["height", "weight", "species", "abilities"].forEach( (pokeAttribute) => {
-                    const newPTag = document.createElement("p");
-                    if (pokeAttribute === "height") {
-                        newPTag.innerText = "Height: " + json.height;
-                    } else if (pokeAttribute === "weight") {
-                        newPTag.innerText = "Weight: " + json.weight;
-                    } else if (pokeAttribute === "species") {
-                        newPTag.innerText = "Species: " + json.species.name;
-                    } else if (pokeAttribute === "abilities") {
-                        const ability = json.abilities.reduce( (acc, currValue) => {
-                            return acc.concat(currValue.ability.name + ", ")
-                        }, "")
-                        .trim();
-                        newPTag.innerText = "Abilities: " + ability.substring(0, ability.length - 1);
-                    } 
-                    pokeAttributes.appendChild(newPTag);
-                })
-                pokeImage.setAttribute("src", json.sprites.front_default)
-                pokeName.innerText = json.name;
-                console.log(json);
-                }
-            )
-            return false;
-        }
-
-      </script>          
+    <div class="grid" id="savedPoke"></div>
+        
 </body>
 </html>
