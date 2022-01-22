@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", onbodyload)
 
 let allPokeIDs = new Set();
 let pokeDB = JSON.parse(localStorage.getItem("pokemonList")) || []; 
+
 function onbodyload() {
     document.getElementById("searchInput").addEventListener("submit", callAPI)
     const allPokemon = []
@@ -21,7 +22,7 @@ function onbodyload() {
     .then(response => response.json())
     .then((data) => {
         data.results.forEach((response) => {
-            const pokemonResponse = fetch(response.url, {
+            fetch(response.url, {
                 method: "GET",
                 mode: "cors",
                 cache: "no-cache",
@@ -34,12 +35,11 @@ function onbodyload() {
                 referrer: "no-referrer"
             }) 
             .then(response => response.json())
-            .then(pokemon => console.log(pokemon))
-            allPokemon.push(pokemonResponse)
+            // .then(pokemon => FUNCTION HERE)
         })
     })
     const savedPokeGrid = document.getElementById("savedPoke");
-    pokeDB.forEach( (pokemon) => { 
+    pokeDB.forEach((pokemon) => { 
         allPokeIDs.add(pokemon.id);
         const singlePoke = document.createElement("div");
         const savedPokeImage = document.createElement("img");
@@ -70,7 +70,6 @@ function onbodyload() {
 function callAPI(event) {
     event.preventDefault();
     const pokeName = document.getElementById("pokeNameInput").value;
-    console.log(document.getElementById("pokeName"))
     const url = `https://pokeapi.co/api/v2/pokemon/${pokeName}`
     const res = fetch(url, {
         method: "GET",
