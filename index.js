@@ -35,13 +35,19 @@ function onbodyload() {
                 referrer: "no-referrer"
             }) 
             .then(response => response.json())
-            // .then(pokemon => FUNCTION HERE)
+            .then(pokemon => {
+                const ul = document.getElementById("100PokeList");
+                const li = document.createElement("li");
+                li.innerText = pokemon.species.name;
+                ul.appendChild(li);
+            })
         })
     })
     const savedPokeGrid = document.getElementById("savedPoke");
     pokeDB.forEach((pokemon) => { 
         allPokeIDs.add(pokemon.id);
         const singlePoke = document.createElement("div");
+        singlePoke.setAttribute("class", "pokeCard")
         const savedPokeImage = document.createElement("img");
         savedPokeImage.setAttribute("src", pokemon.pictureURL);
         singlePoke.appendChild(savedPokeImage);
@@ -62,7 +68,19 @@ function onbodyload() {
             } 
             singlePoke.appendChild(newPTag);
         });
-        savedPokeGrid.appendChild(singlePoke)
+        const deleteButtonElement = document.createElement("button");
+        deleteButtonElement.innerText = "Remove Pokémon";
+        deleteButtonElement.addEventListener("click",  () => {
+            allPokeIDs.delete(pokemon.id);
+            const updatedDB = pokeDB.filter((pokeObj) => {
+                return pokeObj.id !== pokemon.id;
+            });
+            pokeDB = updatedDB;
+            localStorage.setItem("pokemonList", JSON.stringify(pokeDB));
+            singlePoke.parentNode.removeChild(singlePoke);
+        })
+        singlePoke.appendChild(deleteButtonElement);
+        savedPokeGrid.appendChild(singlePoke);
 
     })
 }
@@ -133,6 +151,7 @@ function callAPI(event) {
 
             const savedPokeGrid = document.getElementById("savedPoke");
             const singlePoke = document.createElement("div");
+            singlePoke.setAttribute("class", "pokeCard");
             const savedPokeImage = document.createElement("img");
             savedPokeImage.setAttribute("src", json.sprites.front_default);
             singlePoke.appendChild(savedPokeImage);
@@ -151,6 +170,16 @@ function callAPI(event) {
             .trim();
             newPTag4.innerText = "Abilities: " + ability.substring(0, ability.length - 1);
             deleteButtonElement.innerText = "Remove Pokémon";
+            deleteButtonElement.addEventListener("click",  () => {
+                allPokeIDs.delete(json.id);
+                const updatedDB = pokeDB.filter((pokemon) => {
+                    return json.id !== pokemon.id;
+                });
+                pokeDB = updatedDB;
+                localStorage.setItem("pokemonList", JSON.stringify(pokeDB));
+                singlePoke.parentNode.removeChild(singlePoke);
+            })
+
             singlePoke.appendChild(newPTag);
             singlePoke.appendChild(newPTag2);
             singlePoke.appendChild(newPTag3);
@@ -180,21 +209,3 @@ function resetSearch() {
     getPokeImage.setAttribute("src", "");
 }
 
-function deleteThatPoke() {
-        deleteButton.addEventListener("click",  () => {
-
-        })
-
-            const pokeToDelete = { 
-               name: json.name,
-               height: json.height,
-               weight: json.weight,
-               species: json.species,
-               abilities: json.abilities,
-               pictureURL: json.sprites.front_default,
-               id: json.id,
-            };
-            pokeDB.pop(pokeToDelete);
-            allPokeIDs.remove(json.id);
-            // localStorage.setItem("pokemonList", JSON.stringify(pokeDB));
-        }

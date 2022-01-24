@@ -1,9 +1,37 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    background-image: url("w_green.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
+}
+
 #pokeName {
     color: green;
-
 }
 
 .grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 10px;
+}
+
+.flex {
+    display: flex;
+}
+
+.pokeCard {
+    background-color: white;
+    border: 3px solid black;
+    padding: 0px 10px;
+    border-radius: 7.5%;
+}
+
+.pokeText {
+    font-weight: bold;
+    font-size: 1.5rem;
 }

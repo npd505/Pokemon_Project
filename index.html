@@ -8,15 +8,21 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <img src="" alt="" id="pokeImage">
-    <h4 id="pokeName"></h4>
-    <div id="pokeAttributes"></div>
-    <form id="searchInput">
-        <input id="pokeNameInput" type="text">
-        <button id="searchPokeButton" type="submit">Search</button>
-    </form>
-    <div class="grid" id="savedPoke"></div>
-    <!-- <button id="deletePokeButton" type="submit">Remove Pokemon</button> -->
+    <div class="flex">
+        <main>
+            <form id="searchInput">
+                <input id="pokeNameInput" type="text">
+                <button id="searchPokeButton" type="submit">Search</button>
+            </form>
+            <img src="" alt="" id="pokeImage">
+            <h4 id="pokeName"></h4>
+            <div id="pokeAttributes"></div>
+            <div class="grid" id="savedPoke"></div>
+        </main>
+        <aside>
+            <ul class="pokeText" id="100PokeList"></ul>
+        </aside>
+    </div>
     <script src="index.js" charset="utf-8"> </script>
 </body>
 </html>
