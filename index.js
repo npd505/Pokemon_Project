@@ -143,7 +143,6 @@ function callAPI(event) {
                 alert ("You already caught this Pokémon!");
                 resetSearch()
                 return ;
-                resetSearch()
             }
 
             const pokeToSave = { 
