@@ -14,3 +14,5 @@ All pull requests are welcome.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
+
+<img width="1152" alt="Screen Shot 2022-01-25 at 9 53 53 AM" src="https://user-images.githubusercontent.com/87190407/151014929-ba271331-635e-4f2c-8fc4-ee0e0b09e380.png">
